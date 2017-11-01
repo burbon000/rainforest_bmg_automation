@@ -48,10 +48,10 @@ You will need to sign up for an account on github
 
 Clone the repository:
 
-In a terminal run the following in the directory where you would like to clone the Rainforest Livefyre automation repository:
+In a terminal run the following in the directory where you would like to clone the Rainforest MBG automation repository:
 ```bash
-git clone https://github.com/burbon000/rainforest_livefyre_automation.git
-cd rainforest_livefyre_automation
+git clone https://github.com/burbon000/rainforest_mbg_automation.git
+cd rainforest_mbg_automation
 ```
 
 
