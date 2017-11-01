@@ -1,4 +1,4 @@
-# Rainforest Livefyre Automation
+# Rainforest MBG Automation
 
 ## Prerequisites
 
