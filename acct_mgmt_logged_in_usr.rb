@@ -1,5 +1,5 @@
 #tester starts at 
-# https://lemonsarebetter.herokuapp.com/widget.php?network=rainforestqa.fyre.co&site=383920&articleId=ekrfjherf34823&appType=reviews&userId=user1_9080908090
+# https://beta.mindbodygreen.com/
 
 
 test(id: 75147, title: "Account Management - Logged in user (desktop)") do
@@ -10,6 +10,7 @@ test(id: 75147, title: "Account Management - Logged in user (desktop)") do
       'platform': "Windows 7",
       'browserName': "firefox",
       'version': "45",
+      'screenResolution': "1440x900",
       'name': "mbg_acct_mgmt_logged_in_usr",
     }
     Capybara::Selenium::Driver.new(app,
@@ -17,6 +18,9 @@ test(id: 75147, title: "Account Management - Logged in user (desktop)") do
       :url => 'http://RFAutomation:5328f84f-5623-41ba-a81e-b5daff615024@ondemand.saucelabs.com:80/wd/hub',
       :desired_capabilities => @desired_cap
     )
+  end
+  Capybara.register_driver :browser_stack do |app|
+    Capybara::Selenium::Driver.new(app, :browser => :chrome)
   end
   rand_num=Random.rand(89999999) + 10000000
 
@@ -26,7 +30,7 @@ test(id: 75147, title: "Account Management - Logged in user (desktop)") do
   
   #Requires executing post to facebook's graph_api to get FB user email and password
   #   https://graph.facebook.com/500648116717448/accounts?method=post&access_token=
-  curl_resp = `curl "https://graph.facebook.com/500648116717448/accounts?method=post&access_token="` #removed access token for publishing to github
+  curl_resp = ''
   require 'json'
   my_hash = JSON.parse(curl_resp)
   fb_password = my_hash['password']
@@ -47,11 +51,10 @@ test(id: 75147, title: "Account Management - Logged in user (desktop)") do
     
     # wait until popup shows
     for i in 1..5 do
-      if page.has_selector?(:css, 'div.listbuilder-popup-scale')
+      if page.has_selector?(:css, 'div.listbuilder-popup-scale', wait: 10)
         page.find(:css, "div[class*='sumome-react-wysiwyg-close-button'").click
         break
       end
-      sleep(60)
     end
     
     # action    
@@ -117,6 +120,9 @@ test(id: 75147, title: "Account Management - Logged in user (desktop)") do
     # *** START EDITING HERE ***
 
     # action
+    if page.has_selector?(:css, 'div.listbuilder-popup-scale', wait: 10)
+      page.find(:css, "div[class*='sumome-react-wysiwyg-close-button'").click
+    end
     page.find(:css, '.user-container', :text => 'My Account').hover
 
     # response
@@ -143,7 +149,7 @@ test(id: 75147, title: "Account Management - Logged in user (desktop)") do
         page.find(:css, "div[class*='sumome-react-wysiwyg-close-button'").click
         break
       end
-      sleep(30)
+      sleep(10)
     end
     # login with newly created acct
     within(:css, '#gigya-login-screen') do
@@ -210,6 +216,9 @@ test(id: 75147, title: "Account Management - Logged in user (desktop)") do
     # *** START EDITING HERE ***
     
     # action
+    scroll_offset = 2000 
+    page.execute_script("window.scrollTo(0,#{scroll_offset})")
+
     within(:css, '.profile-contents') do
       page.find(:css, "img[class='facebook-icon social-icon-gray']").click
     end
@@ -243,7 +252,7 @@ test(id: 75147, title: "Account Management - Logged in user (desktop)") do
     page.find(:css, "input[name='login']").click
 
     # response
-    expect(page).to have_content('Review the info that you provide')
+    expect(page).to have_content('Review the info you provide')
     expect(page).to have_selector(:css, "button[name='__CONFIRM__']")
 
     # *** STOP EDITING HERE ***
@@ -359,5 +368,5 @@ test(id: 75147, title: "Account Management - Logged in user (desktop)") do
 
     # *** STOP EDITING HERE ***
   end
-  sleep(10)
+  #sleep(10)
 end

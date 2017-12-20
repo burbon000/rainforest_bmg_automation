@@ -12,6 +12,7 @@ test(id: 49012, title: "Article Basics - Desktop") do
       'platform': "Windows 7",
       'browserName': "firefox",
       #'locationContextEnabled': false,
+      'screenResolution': "1920x1080",
       'version': "45",
       'name': "mbg_article_basics_desk",
     }
@@ -21,22 +22,26 @@ test(id: 49012, title: "Article Basics - Desktop") do
       :desired_capabilities => @desired_cap
     )
   end
-  visit "https://beta.mindbodygreen.com/"
+  Capybara.register_driver :browser_stack do |app|
+    Capybara::Selenium::Driver.new(app, :browser => :chrome)
+  end  
+  #visit "https://beta.mindbodygreen.com/"
+  visit "https://beta.mindbodygreen.com/0-26580/why-this-acroyogi-makes-it-a-point-to-get-upside-down-sweat-every-single-day.html"
   window = Capybara.current_session.driver.browser.manage.window
   #window.maximize
+  scroll_offset = 0
 
   step id: 1,
       action: "As you scroll down the page, you may see ad or email signup popups you can close and ignore.",
       response: "Are you able to continue with the test?" do
     # *** START EDITING HERE ***
 
-    # action
-    scroll_offset = 0
+    # action    
     for i in 1..5 do
-      scroll_offset += 1500 
+      scroll_offset += 500 
       page.execute_script("window.scrollTo(0,#{scroll_offset})")
-      if page.has_selector?(:css, 'div.listbuilder-popup-scale', wait: 20)
-        page.find(:css, "div[class*='sumome-react-wysiwyg-close-button'").click
+      if page.has_selector?(:css, 'div.listbuilder-popup-scale', wait: 10)
+        #page.find(:css, "div[class*='sumome-react-wysiwyg-close-button'").click
         break
       end
     end
@@ -44,7 +49,7 @@ test(id: 49012, title: "Article Basics - Desktop") do
     # response
       # no response
 
-    page.save_screenshot('screenshot_step_1.png')
+    #page.save_screenshot('screenshot_step_1.png')
     # *** STOP EDITING HERE ***
   end
 
@@ -54,7 +59,7 @@ test(id: 49012, title: "Article Basics - Desktop") do
     # *** START EDITING HERE ***
 
     # action
-    visit "https://beta.mindbodygreen.com/0-26580/why-this-acroyogi-makes-it-a-point-to-get-upside-down-sweat-every-single-day.html"
+    #visit "https://beta.mindbodygreen.com/0-26580/why-this-acroyogi-makes-it-a-point-to-get-upside-down-sweat-every-single-day.html"
 
     # response
     expect(page).to have_selector(:css, '.title')
@@ -62,7 +67,7 @@ test(id: 49012, title: "Article Basics - Desktop") do
     expect(page).to have_selector(:css, '.byline-author')
     expect(page).to have_selector(:css, '.date')
 
-    page.save_screenshot('screenshot_step_2.png')
+    #page.save_screenshot('screenshot_step_2.png')
     # *** STOP EDITING HERE ***
   end
 
@@ -84,7 +89,7 @@ test(id: 49012, title: "Article Basics - Desktop") do
       expect(page).to have_selector(:css, '.article_email_button.social-sprite-image')
     end
 
-    page.save_screenshot('screenshot_step_3.png')
+    #page.save_screenshot('screenshot_step_3.png')
     # *** STOP EDITING HERE ***
   end
 
@@ -101,7 +106,7 @@ test(id: 49012, title: "Article Basics - Desktop") do
     expect(page).to have_selector(:css, '.article_save_button.hide-for-print')
     expect(page).to have_no_selector(:css, '.article_save_button.hide-for-print.saved')
     
-    page.save_screenshot('screenshot_step_4.png')
+    #page.save_screenshot('screenshot_step_4.png')
     # *** STOP EDITING HERE ***
   end
 
@@ -117,7 +122,7 @@ test(id: 49012, title: "Article Basics - Desktop") do
     # response
     expect(page).to have_selector(:css, '.photo-credits')
 
-    page.save_screenshot('screenshot_step_5.png')
+    #page.save_screenshot('screenshot_step_5.png')
     # *** STOP EDITING HERE ***
   end
 
@@ -128,17 +133,13 @@ test(id: 49012, title: "Article Basics - Desktop") do
     # *** START EDITING HERE ***
       
     # action
-    scroll_offset = 0
-    for i in 1..4 do
-      scroll_offset += 1000 
-      page.execute_script("window.scrollTo(0,#{scroll_offset})")
-      sleep(1)
-    end
+    scroll_offset += 2000 
+    page.execute_script("window.scrollTo(0,#{scroll_offset})")
 
     # response 
     expect(page.all(:css, '.row.unit.unit--tab--sm', :maximum => 4, :wait => 60, :visible => false).count).to eq(3)
 
-    page.save_screenshot('screenshot_step_6.png')
+    #page.save_screenshot('screenshot_step_6.png')
     # *** STOP EDITING HERE ***
 
   end
@@ -151,6 +152,8 @@ test(id: 49012, title: "Article Basics - Desktop") do
     # *** START EDITING HERE ***
 
     # action
+    scroll_offset += 1000 
+    page.execute_script("window.scrollTo(0,#{scroll_offset})")
 
     # response
     within(:css, '.social-below-article-container') do
@@ -161,7 +164,7 @@ test(id: 49012, title: "Article Basics - Desktop") do
     end
     expect(page).to have_content('KEEP READING:  ')
 
-    page.save_screenshot('screenshot_step_7.png')
+    #page.save_screenshot('screenshot_step_7.png')
     # *** STOP EDITING HERE ***
 
   end
@@ -179,7 +182,7 @@ test(id: 49012, title: "Article Basics - Desktop") do
     expect(page).to have_selector(:css, '.show-for-medium-up>p')
     expect(page).to have_selector(:css, '.author-unit__name')
 
-    page.save_screenshot('screenshot_step_8.png')
+    #page.save_screenshot('screenshot_step_8.png')
     # *** STOP EDITING HERE ***
 
   end
@@ -199,7 +202,7 @@ test(id: 49012, title: "Article Basics - Desktop") do
       expect(page.all(:css, '.unit__description', :maximum => 7).count).to eq(6)
     end
 
-    page.save_screenshot('screenshot_step_9.png')
+    #page.save_screenshot('screenshot_step_9.png')
     # *** STOP EDITING HERE ***
 
   end
@@ -212,7 +215,9 @@ test(id: 49012, title: "Article Basics - Desktop") do
     # *** START EDITING HERE ***
 
     # action
-    page.execute_script("window.scrollTo(0,1500)")
+    scroll_offset += 1000 
+    page.execute_script("window.scrollTo(0,#{scroll_offset})")
+    #page.execute_script("window.scrollTo(0,1500)")
 
     # response
     within(:css, '.row.article__latest') do
@@ -221,7 +226,7 @@ test(id: 49012, title: "Article Basics - Desktop") do
       expect(page).to have_selector(:css, '.text-center.vertical-ad-unit.centered-ad', :visible => false)
     end
 
-    page.save_screenshot('screenshot_step_10.png')
+    #page.save_screenshot('screenshot_step_10.png')
     # *** STOP EDITING HERE ***
 
   end
@@ -242,7 +247,7 @@ test(id: 49012, title: "Article Basics - Desktop") do
     end
 
 
-    page.save_screenshot('screenshot_step_11.png')
+    #page.save_screenshot('screenshot_step_11.png')
     # *** STOP EDITING HERE ***
 
   end
@@ -254,8 +259,11 @@ test(id: 49012, title: "Article Basics - Desktop") do
     # *** START EDITING HERE ***
 
     # action
+    scroll_offset = 0
     for i in 1..5 do
-      if page.has_selector?(:css, 'div.listbuilder-popup-scale', wait: 20)
+      scroll_offset += 500 
+      page.execute_script("window.scrollTo(0,#{scroll_offset})")
+      if page.has_selector?(:css, 'div.listbuilder-popup-scale', wait: 10)
         page.find(:css, "div[class*='sumome-react-wysiwyg-close-button'").click
         break
       end
@@ -264,7 +272,7 @@ test(id: 49012, title: "Article Basics - Desktop") do
     # response
       #no response
 
-    page.save_screenshot('screenshot_step_12.png')
+    #page.save_screenshot('screenshot_step_12.png')
     # *** STOP EDITING HERE ***
   end
 
@@ -275,12 +283,13 @@ test(id: 49012, title: "Article Basics - Desktop") do
     # *** START EDITING HERE ***
 
     # action
-      #no action
+      scroll_offset = 0
+      page.execute_script("window.scrollTo(0,#{scroll_offset})")
 
     # response
     expect(page).to have_content("Derek O’Neill")
 
-    page.save_screenshot('screenshot_step_12.png')
+    #page.save_screenshot('screenshot_step_12.png')
     # *** STOP EDITING HERE ***
   end
 
@@ -300,7 +309,7 @@ test(id: 49012, title: "Article Basics - Desktop") do
       expect(page).to have_content("Derek O’Neill")
     end
 
-    page.save_screenshot('screenshot_step_12.png')
+    #page.save_screenshot('screenshot_step_12.png')
     # *** STOP EDITING HERE ***
   end
 
@@ -315,9 +324,9 @@ test(id: 49012, title: "Article Basics - Desktop") do
     page.go_back
 
     # response
-      #Unable to find sponsor in new page on staging environment. Can't force to beta env
+      #No sponsor on this article
 
-    page.save_screenshot('screenshot_step_12.png')
+    #page.save_screenshot('screenshot_step_12.png')
     # *** STOP EDITING HERE ***
   end
 
@@ -328,10 +337,10 @@ test(id: 49012, title: "Article Basics - Desktop") do
     # *** START EDITING HERE ***
 
     # action
-      #Unable to find sponsor in new page on staging environment. Can't force to beta env
+      #No sponsor on this article
     # response
 
-    page.save_screenshot('screenshot_step_12.png')
+    #page.save_screenshot('screenshot_step_12.png')
     # *** STOP EDITING HERE ***
   end
 

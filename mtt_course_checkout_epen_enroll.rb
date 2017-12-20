@@ -10,6 +10,7 @@ test(id: 89962, title: "MTT Course Checkout Test for Installation Payment when E
       'platform': "Windows 7",
       'browserName': "firefox",
       'version': "45",
+      'screenResolution': "1440x900",      
       'name': "mbg_mtt_course_chkout_open_enrl",
     }
     Capybara::Selenium::Driver.new(app,
@@ -18,11 +19,14 @@ test(id: 89962, title: "MTT Course Checkout Test for Installation Payment when E
       :desired_capabilities => @desired_cap
     )
   end
+  Capybara.register_driver :browser_stack do |app|
+    Capybara::Selenium::Driver.new(app, :browser => :chrome)
+  end  
   rand_num=Random.rand(899999999) + 100000000
   visit "http://beta.mindbodygreen.com/trainings/meditation-teacher-training"
 
   window = Capybara.current_session.driver.browser.manage.window
-  window.maximize
+  #window.maximize
 
   step id: 1,
       action: "Close out any popups. Scroll down and click on the See Pricing Plans button under the large image screenshot.png. Wait 5 seconds.",
@@ -49,7 +53,7 @@ test(id: 89962, title: "MTT Course Checkout Test for Installation Payment when E
     # The following JS checks if the .price-container div which holds the course pricing info is in view as a result of clicking the Enroll button
     expect(page.evaluate_script("function() {var elm  = document.querySelector('.price-container');var vph = $(window).height(),st = $(window).scrollTop(),y = $(elm).offset().top;return (y < (vph + st));}();").inspect).to eql("true")
 
-    page.save_screenshot('screenshot_step_1.png')
+    #page.save_screenshot('screenshot_step_1.png')
     # *** STOP EDITING HERE ***
   end
 
@@ -72,7 +76,7 @@ test(id: 89962, title: "MTT Course Checkout Test for Installation Payment when E
     expect(page).to have_content('Your Shopping Cart ( 2 )', wait: 30)
     expect(page).to have_content('TRAININGS')
 
-    page.save_screenshot('screenshot_step_2.png')
+    #page.save_screenshot('screenshot_step_2.png')
     # *** STOP EDITING HERE ***
   end
 
@@ -85,25 +89,18 @@ test(id: 89962, title: "MTT Course Checkout Test for Installation Payment when E
     email = "automation#{rand_num}@nowhere.com"
 
     # action
-    
     fill_in 'emailCheckout', with: email
     page.execute_script('window.scrollTo(0,-1000)')
     #page.find(:css, '#billingName').click
 
     # response
       # wait to make sure there is no pop-up
-    #for i in 1..5 do
-    #  if page.has_selector?(:css, 'div.listbuilder-popup-scale')
-    #    page.find(:css, "div[class*='sumome-react-wysiwyg-close-button'", wait: 10).click
-    #    break
-    #  end
-    #end
     if page.has_selector?(:css, 'div.listbuilder-popup-scale')
       page.find(:css, "div[class*='sumome-react-wysiwyg-close-button'").click
     end
 
     page.execute_script('window.scrollTo(0,-10000)')
-    page.save_screenshot('screenshot_step_3.png')
+    #page.save_screenshot('screenshot_step_3.png')
     # *** STOP EDITING HERE ***
   end
 
@@ -127,6 +124,8 @@ test(id: 89962, title: "MTT Course Checkout Test for Installation Payment when E
       fill_in 'creditCardNumber', with: cc_num
       fill_in 'postalCode', with: postal
       fill_in 'cvc', with: cvc.to_s
+      scroll_offset = 2000 
+      page.execute_script("window.scrollTo(0,#{scroll_offset})")
       page.select 'United States', :from => 'country'
       page.select '12', :from => 'month'
       page.select '2022', :from => 'year'
@@ -140,7 +139,7 @@ test(id: 89962, title: "MTT Course Checkout Test for Installation Payment when E
         ' "There was an error with your user information - Credit card number is invalid." Please make any necessary corrections and try again.'\
         ' If this error persists, please contact us at support@mindbodygreen.com.')
 
-    page.save_screenshot('screenshot_step_4.png')
+    #page.save_screenshot('screenshot_step_4.png')
     # *** STOP EDITING HERE ***
   end
 
@@ -159,14 +158,20 @@ test(id: 89962, title: "MTT Course Checkout Test for Installation Payment when E
     # action
     within(:css, '#credit-card') do
       fill_in 'creditCardNumber', with: cc_num
+      scroll_offset = 2000 
+      page.execute_script("window.scrollTo(0,#{scroll_offset})")
       page.check 'agreePrivacy'
       page.click_button 'Complete My Order'
     end
 
     # response
+    if page.has_selector?(:css, 'div.listbuilder-popup-scale')
+        page.find(:css, "div[class*='sumome-react-wysiwyg-close-button'", wait: 10).click
+    end
+
     expect(page).to have_content('Purchase Confirmation')
 
-    page.save_screenshot('screenshot_step_5.png')
+    #page.save_screenshot('screenshot_step_5.png')
     # *** STOP EDITING HERE ***
   end
 
