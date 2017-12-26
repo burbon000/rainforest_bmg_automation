@@ -10,7 +10,7 @@ test(id: 191991, title: "Review Flag") do
       'platform': "Windows 7",
       'browserName': "firefox",
       'version': "45",
-      'screenResolution': "1440x900",
+      'screenResolution': "1920x1080",
       'name': "mbg_classes_chckout_usr",
     }
     Capybara::Selenium::Driver.new(app,
@@ -22,6 +22,7 @@ test(id: 191991, title: "Review Flag") do
   Capybara.register_driver :browser_stack do |app|
     Capybara::Selenium::Driver.new(app, :browser => :chrome)
   end
+
   rand_num=Random.rand(899999999) + 100000000
   checkout_page_url = 'https://beta.mindbodygreen.com/classes/checkout'
   visit "https://beta.mindbodygreen.com/classes/topics"
@@ -39,11 +40,10 @@ test(id: 191991, title: "Review Flag") do
     class_link = ""
     class_text = ""
     for i in 1..3 do
-      if page.has_selector?(:css, 'div.listbuilder-popup-scale')
+      if page.has_selector?(:css, 'div.listbuilder-popup-scale', wait: 10)
         page.find(:css, "div[class*='sumome-react-wysiwyg-close-button'").click
         break
       end
-      sleep(10)
     end
     expect(page).to have_content("All Video Classes")
     # action
@@ -59,11 +59,10 @@ test(id: 191991, title: "Review Flag") do
     expect(Capybara.current_session.driver.current_url).to eql('https://staging.mindbodygreen.com/classes/28-days-to-yoga-bliss-the-fundamentals-poses-and-breathwork-you-need-to-know')
     visit 'https://beta.mindbodygreen.com/classes/28-days-to-yoga-bliss-the-fundamentals-poses-and-breathwork-you-need-to-know'
     for i in 1..5 do
-      if page.has_selector?(:css, 'div.listbuilder-popup-scale')
+      if page.has_selector?(:css, 'div.listbuilder-popup-scale', wait: 10)
         page.find(:css, "div[class*='sumome-react-wysiwyg-close-button'").click
         break
       end
-      sleep(10)
     end
     if page.has_selector?(:css, '.close.close-x')
       page.find(:css, '.close.close-x').click
@@ -94,11 +93,10 @@ test(id: 191991, title: "Review Flag") do
     
     visit checkout_page_url
     for i in 1..2 do
-      if page.has_selector?(:css, 'div.listbuilder-popup-scale')
+      if page.has_selector?(:css, 'div.listbuilder-popup-scale', wait: 10)
         page.find(:css, "div[class*='sumome-react-wysiwyg-close-button'").click
         break
       end
-      sleep(10)
     end
     
     # response
@@ -131,7 +129,7 @@ test(id: 191991, title: "Review Flag") do
       # use the following site to verify HTTPS (green padlock)   
     visit 'https://www.whynopadlock.com/'
     page.fill_in 'url', with: checkout_page_url
-    page.find(:css, '#Submit').click
+    page.find(:css, '#process-form-button').click
 
     # response
     expect(page).to have_content(checkout_page_url)
@@ -141,11 +139,10 @@ test(id: 191991, title: "Review Flag") do
 
     visit checkout_page_url
     for i in 1..5 do
-      if page.has_selector?(:css, 'div.listbuilder-popup-scale')
+      if page.has_selector?(:css, 'div.listbuilder-popup-scale', wait: 10)
         page.find(:css, "div[class*='sumome-react-wysiwyg-close-button'").click
         break
       end
-      sleep(10)
     end
 =end
     # *** STOP EDITING HERE ***

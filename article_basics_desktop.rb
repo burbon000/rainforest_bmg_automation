@@ -11,7 +11,6 @@ test(id: 49012, title: "Article Basics - Desktop") do
     @desired_cap = {
       'platform': "Windows 7",
       'browserName': "firefox",
-      #'locationContextEnabled': false,
       'screenResolution': "1920x1080",
       'version': "45",
       'name': "mbg_article_basics_desk",
@@ -25,9 +24,9 @@ test(id: 49012, title: "Article Basics - Desktop") do
   Capybara.register_driver :browser_stack do |app|
     Capybara::Selenium::Driver.new(app, :browser => :chrome)
   end  
-  #visit "https://beta.mindbodygreen.com/"
+  
   visit "https://beta.mindbodygreen.com/0-26580/why-this-acroyogi-makes-it-a-point-to-get-upside-down-sweat-every-single-day.html"
-  window = Capybara.current_session.driver.browser.manage.window
+  #window = Capybara.current_session.driver.browser.manage.window
   #window.maximize
   scroll_offset = 0
 
@@ -59,7 +58,7 @@ test(id: 49012, title: "Article Basics - Desktop") do
     # *** START EDITING HERE ***
 
     # action
-    #visit "https://beta.mindbodygreen.com/0-26580/why-this-acroyogi-makes-it-a-point-to-get-upside-down-sweat-every-single-day.html"
+      #no action
 
     # response
     expect(page).to have_selector(:css, '.title')

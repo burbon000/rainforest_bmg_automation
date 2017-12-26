@@ -10,7 +10,7 @@ test(id: 75147, title: "Account Management - Logged in user (desktop)") do
       'platform': "Windows 7",
       'browserName': "firefox",
       'version': "45",
-      'screenResolution': "1440x900",
+      'screenResolution': "1920x1080",
       'name': "mbg_acct_mgmt_logged_in_usr",
     }
     Capybara::Selenium::Driver.new(app,
@@ -30,7 +30,7 @@ test(id: 75147, title: "Account Management - Logged in user (desktop)") do
   
   #Requires executing post to facebook's graph_api to get FB user email and password
   #   https://graph.facebook.com/500648116717448/accounts?method=post&access_token=
-  curl_resp = ''
+  
   require 'json'
   my_hash = JSON.parse(curl_resp)
   fb_password = my_hash['password']

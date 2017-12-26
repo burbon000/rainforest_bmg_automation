@@ -10,7 +10,7 @@ test(id: 89962, title: "MTT Course Checkout Test for Installation Payment when E
       'platform': "Windows 7",
       'browserName': "firefox",
       'version': "45",
-      'screenResolution': "1440x900",      
+      'screenResolution': "1920x1080",      
       'name': "mbg_mtt_course_chkout_open_enrl",
     }
     Capybara::Selenium::Driver.new(app,
@@ -25,7 +25,7 @@ test(id: 89962, title: "MTT Course Checkout Test for Installation Payment when E
   rand_num=Random.rand(899999999) + 100000000
   visit "http://beta.mindbodygreen.com/trainings/meditation-teacher-training"
 
-  window = Capybara.current_session.driver.browser.manage.window
+  #window = Capybara.current_session.driver.browser.manage.window
   #window.maximize
 
   step id: 1,
