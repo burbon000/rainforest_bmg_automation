@@ -1,10 +1,11 @@
 #tester starts at 
 # "http://beta.mindbodygreen.com/trainings/meditation-teacher-training"
-
+# NOTES: This script currently does not work becuase the course is no longer open for enrollment
 
 test(id: 89962, title: "MTT Course Checkout Test for Installation Payment when Enrollment Open") do
   # You can use any of the following variables in your code:
   # - []
+  # used to run Saucelabs with version 45 of Firefox. Version 50 was causing problems with some functionality
   Capybara.register_driver :sauce do |app|
     @desired_cap = {
       'platform': "Windows 7",
@@ -15,18 +16,20 @@ test(id: 89962, title: "MTT Course Checkout Test for Installation Payment when E
     }
     Capybara::Selenium::Driver.new(app,
       :browser => :remote,
-      :url => 'http://RFAutomation:5328f84f-5623-41ba-a81e-b5daff615024@ondemand.saucelabs.com:80/wd/hub',
+      :url => 'http://@ondemand.saucelabs.com:80/wd/hub',
       :desired_capabilities => @desired_cap
     )
   end
-  Capybara.register_driver :browser_stack do |app|
+  # chrome testing
+  Capybara.register_driver :selenium do |app|
     Capybara::Selenium::Driver.new(app, :browser => :chrome)
-  end  
-  rand_num=Random.rand(899999999) + 100000000
-  visit "http://beta.mindbodygreen.com/trainings/meditation-teacher-training"
+  end
 
-  #window = Capybara.current_session.driver.browser.manage.window
-  #window.maximize
+  # used for random email
+  rand_num=Random.rand(899999999) + 100000000
+  
+  #Starting point
+  visit "http://beta.mindbodygreen.com/trainings/meditation-teacher-training"
 
   step id: 1,
       action: "Close out any popups. Scroll down and click on the See Pricing Plans button under the large image screenshot.png. Wait 5 seconds.",
@@ -42,6 +45,7 @@ test(id: 89962, title: "MTT Course Checkout Test for Installation Payment when E
         break
       end
     end
+    # This step currently fails beacuse the class is no longer open for enrollment
     # The following JS checks if the .price-container div which holds the course pricing info is in view as a result of clicking the Enroll button
     expect(page.evaluate_script("function() {var elm  = document.querySelector('.price-container');var vph = $(window).height(),st = $(window).scrollTop(),y = $(elm).offset().top;return (y < (vph + st));}();").inspect).to eql("false")
     within(:css, '#training-sub-nav') do
@@ -49,7 +53,7 @@ test(id: 89962, title: "MTT Course Checkout Test for Installation Payment when E
     end
 
     # response
-    sleep(1)
+    sleep(1) #needed because following step does not cause a wait
     # The following JS checks if the .price-container div which holds the course pricing info is in view as a result of clicking the Enroll button
     expect(page.evaluate_script("function() {var elm  = document.querySelector('.price-container');var vph = $(window).height(),st = $(window).scrollTop(),y = $(elm).offset().top;return (y < (vph + st));}();").inspect).to eql("true")
 
@@ -91,7 +95,6 @@ test(id: 89962, title: "MTT Course Checkout Test for Installation Payment when E
     # action
     fill_in 'emailCheckout', with: email
     page.execute_script('window.scrollTo(0,-1000)')
-    #page.find(:css, '#billingName').click
 
     # response
       # wait to make sure there is no pop-up
@@ -99,7 +102,7 @@ test(id: 89962, title: "MTT Course Checkout Test for Installation Payment when E
       page.find(:css, "div[class*='sumome-react-wysiwyg-close-button'").click
     end
 
-    page.execute_script('window.scrollTo(0,-10000)')
+    #page.execute_script('window.scrollTo(0,-10000)')
     #page.save_screenshot('screenshot_step_3.png')
     # *** STOP EDITING HERE ***
   end

@@ -15,22 +15,26 @@ test(id: 75147, title: "Account Management - Logged in user (desktop)") do
     }
     Capybara::Selenium::Driver.new(app,
       :browser => :remote,
-      :url => 'http://RFAutomation:5328f84f-5623-41ba-a81e-b5daff615024@ondemand.saucelabs.com:80/wd/hub',
+      :url => 'http://@ondemand.saucelabs.com:80/wd/hub',
       :desired_capabilities => @desired_cap
     )
   end
-  Capybara.register_driver :browser_stack do |app|
+  # chrome testing
+  Capybara.register_driver :selenium do |app|
     Capybara::Selenium::Driver.new(app, :browser => :chrome)
   end
+
+  # random number used for user information
   rand_num=Random.rand(89999999) + 10000000
 
   email = 'automation' + rand_num.to_s + "@nowhere.com"
   first_name = 'Automation' + rand_num.to_s
   password = 'Pass' + rand_num.to_s
   
-  #Requires executing post to facebook's graph_api to get FB user email and password
+  #Requires executing post to facebook's graph_api to get FB user email and password. 
+    #Access token has been removed for posting to github. Email me to get it
   #   https://graph.facebook.com/500648116717448/accounts?method=post&access_token=
-  
+  curl_resp = `curl "https://graph.facebook.com/500648116717448/accounts?method=post&access_token="`
   require 'json'
   my_hash = JSON.parse(curl_resp)
   fb_password = my_hash['password']
@@ -38,7 +42,7 @@ test(id: 75147, title: "Account Management - Logged in user (desktop)") do
 
   
   visit "https://beta.mindbodygreen.com/"
-  window = Capybara.current_session.driver.browser.manage.window
+  #window = Capybara.current_session.driver.browser.manage.window
   #window.maximize
 
   step id: 1,
@@ -50,7 +54,7 @@ test(id: 75147, title: "Account Management - Logged in user (desktop)") do
     expect(page).to have_content("mindbodygreen")
     
     # wait until popup shows
-    for i in 1..5 do
+    for i in 1..6 do
       if page.has_selector?(:css, 'div.listbuilder-popup-scale', wait: 10)
         page.find(:css, "div[class*='sumome-react-wysiwyg-close-button'").click
         break
@@ -141,15 +145,14 @@ test(id: 75147, title: "Account Management - Logged in user (desktop)") do
     within(:css, '.nav__main-nav-icon-account-user-dropdown', :visible => true) do
       page.find(:css, 'a', :text => 'My Account').click
     end
-    # Currently the aboe step causes a redirect to the staging env. The following block is a workaround
+    # Currently the above step causes a redirect to the staging env. The following block is a workaround
     # ******************Begin Workaround******************
     # wait until popup shows
     for i in 1..5 do
-      if page.has_selector?(:css, 'div.listbuilder-popup-scale')
+      if page.has_selector?(:css, 'div.listbuilder-popup-scale', wait: 10)
         page.find(:css, "div[class*='sumome-react-wysiwyg-close-button'").click
         break
       end
-      sleep(10)
     end
     # login with newly created acct
     within(:css, '#gigya-login-screen') do
@@ -224,6 +227,7 @@ test(id: 75147, title: "Account Management - Logged in user (desktop)") do
     end
 
     # response
+      # wait for facebook popup window
     for i in 1..5 do
       if page.driver.browser.window_handles.last != page.driver.browser.window_handles.first
         break

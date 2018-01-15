@@ -1,10 +1,11 @@
 #tester starts at 
-# https://lemonsarebetter.herokuapp.com/widget.php?network=rainforestqa.fyre.co&site=383920&articleId=ekrfjherf34823&appType=reviews&userId=user1_9080908090
+# "https://beta.mindbodygreen.com/classes/topics"
 
 
 test(id: 191991, title: "Review Flag") do
   # You can use any of the following variables in your code:
   # - []
+  # used to run Saucelabs with version 45 of Firefox. Version 50 was causing problems with some functionality
   Capybara.register_driver :sauce do |app|
     @desired_cap = {
       'platform': "Windows 7",
@@ -15,30 +16,32 @@ test(id: 191991, title: "Review Flag") do
     }
     Capybara::Selenium::Driver.new(app,
       :browser => :remote,
-      :url => 'http://RFAutomation:5328f84f-5623-41ba-a81e-b5daff615024@ondemand.saucelabs.com:80/wd/hub',
+      :url => 'http://@ondemand.saucelabs.com:80/wd/hub',
       :desired_capabilities => @desired_cap
     )
-  end
-  Capybara.register_driver :browser_stack do |app|
+  end  
+  Capybara.register_driver :selenium do |app|
     Capybara::Selenium::Driver.new(app, :browser => :chrome)
   end
 
+  # used for random email
   rand_num=Random.rand(899999999) + 100000000
+  # used to redirect back to beta environment when application incorrectly redirects to staging
   checkout_page_url = 'https://beta.mindbodygreen.com/classes/checkout'
   visit "https://beta.mindbodygreen.com/classes/topics"
-  window = Capybara.current_session.driver.browser.manage.window
   
 
   step id: 1,
       action: "Close out any popups that appear. Select a random class from the page and click on either the image or link to the class.",
       response: "Are you taken to the class page?" do
     # *** START EDITING HERE ***
+    # ideally we would choose a random article, but the DOM behavior changes too much between articles making it difficult to automate
     #class_count = all(:css, "div[class='unit_title']").count
-    #puts class_count
     #rand_class = Random.rand(1..(class_count/4).to_i)
     rand_class = 0
     class_link = ""
     class_text = ""
+    #wait for popup
     for i in 1..3 do
       if page.has_selector?(:css, 'div.listbuilder-popup-scale', wait: 10)
         page.find(:css, "div[class*='sumome-react-wysiwyg-close-button'").click
@@ -47,9 +50,7 @@ test(id: 191991, title: "Review Flag") do
     end
     expect(page).to have_content("All Video Classes")
     # action
-    #page.find(:css, '.unit_img>a', :match => :first, wait: 60).click
-    #page.find(:css, '.unit_title>a', :match => :first, wait: 60).click
-    #page.all(:css, '.unit_img>a')[0].click
+    # currently chooses the first class topic and captures the text for verification and then clicks link
     within(all(:css, "div[class='unit_title']")[rand_class]) do
       class_link = page.find(:css, 'a')
       class_text = class_link.text
@@ -58,6 +59,7 @@ test(id: 191991, title: "Review Flag") do
 
     expect(Capybara.current_session.driver.current_url).to eql('https://staging.mindbodygreen.com/classes/28-days-to-yoga-bliss-the-fundamentals-poses-and-breathwork-you-need-to-know')
     visit 'https://beta.mindbodygreen.com/classes/28-days-to-yoga-bliss-the-fundamentals-poses-and-breathwork-you-need-to-know'
+    #wait for popup
     for i in 1..5 do
       if page.has_selector?(:css, 'div.listbuilder-popup-scale', wait: 10)
         page.find(:css, "div[class*='sumome-react-wysiwyg-close-button'").click
@@ -82,16 +84,14 @@ test(id: 191991, title: "Review Flag") do
     # *** START EDITING HERE ***
 
     # action
-    
-    #within(:css, '.columns.large-4') do
-    #page.find(:css, '.added-to-cart-btn.ws-button.btn-fill.btn-lg', :text => '   Take This Class ', :match => :first, wait: 20).click
     page.find(:css, '.added-to-cart-btn.ws-button.btn-fill.btn-lg').click
-    #end
     
     expect(page).to have_content('Select Payment Method To Complete Order', wait: 20)
     #end
     
+    # workaround needed here that redirects back to the beta environment because app is directing to staging env
     visit checkout_page_url
+    #wait for popup
     for i in 1..2 do
       if page.has_selector?(:css, 'div.listbuilder-popup-scale', wait: 10)
         page.find(:css, "div[class*='sumome-react-wysiwyg-close-button'").click
@@ -124,6 +124,7 @@ test(id: 191991, title: "Review Flag") do
       response: "Does it show a padlock icon in the browser location bar indicating the site is secure?" do
     
     # *** START EDITING HERE ***
+    # can't use this workaround anylonger because they added CAPTCHA verification
 =begin    
     # action
       # use the following site to verify HTTPS (green padlock)   
@@ -190,6 +191,7 @@ test(id: 191991, title: "Review Flag") do
     # *** START EDITING HERE ***
 
     # action
+    # => scroll object into view
     scroll_offset = 2000 
     page.execute_script("window.scrollTo(0,#{scroll_offset})")
     page.click_button 'Complete My Order'
@@ -268,6 +270,7 @@ test(id: 191991, title: "Review Flag") do
     end
 
     # response
+    # no check required
 
     # *** STOP EDITING HERE ***
 
@@ -297,6 +300,5 @@ test(id: 191991, title: "Review Flag") do
     # *** STOP EDITING HERE ***
 
   end
-
-  #sleep(20)
+  
 end

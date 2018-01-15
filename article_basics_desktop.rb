@@ -1,12 +1,11 @@
 #tester starts at 
-# https://beta.mindbodygreen.com/
-# https://staging.mindbodygreen.com/0-29941/does-having-a-fertility-year-really-help-your-chances-of-conception-a-doctor-e.html 
-# https://staging.mindbodygreen.com/0-30059/steal-it-the-australian-yoga-secret-were-obsessing-over.html
+# "https://beta.mindbodygreen.com/0-26580/why-this-acroyogi-makes-it-a-point-to-get-upside-down-sweat-every-single-day.html"
+# includes https://staging.mindbodygreen.com/0-30005/heartbreak-isnt-all-there-is-heres-how-to-process-loss-open-yourself-up-to-love.html
 
 test(id: 49012, title: "Article Basics - Desktop") do
   # You can use any of the following variables in your code:
   # - []
-  rand_num=Random.rand(899999999) + 100000000
+  # used to run Saucelabs with version 45 of Firefox. Version 50 was causing problems with some functionality
   Capybara.register_driver :sauce do |app|
     @desired_cap = {
       'platform': "Windows 7",
@@ -17,17 +16,16 @@ test(id: 49012, title: "Article Basics - Desktop") do
     }
     Capybara::Selenium::Driver.new(app,
       :browser => :remote,
-      :url => 'http://RFAutomation:5328f84f-5623-41ba-a81e-b5daff615024@ondemand.saucelabs.com:80/wd/hub',
+      :url => 'http://@ondemand.saucelabs.com:80/wd/hub',
       :desired_capabilities => @desired_cap
     )
   end
-  Capybara.register_driver :browser_stack do |app|
-    Capybara::Selenium::Driver.new(app, :browser => :chrome)
+  # chrome testing
+  Capybara.register_driver :selenium do |app|
+    Capybara::Selenium::Driver.new(app, :browser => :firefox)
   end  
   
-  visit "https://beta.mindbodygreen.com/0-26580/why-this-acroyogi-makes-it-a-point-to-get-upside-down-sweat-every-single-day.html"
-  #window = Capybara.current_session.driver.browser.manage.window
-  #window.maximize
+  # used to scroll down the screen
   scroll_offset = 0
 
   step id: 1,
@@ -35,12 +33,15 @@ test(id: 49012, title: "Article Basics - Desktop") do
       response: "Are you able to continue with the test?" do
     # *** START EDITING HERE ***
 
-    # action    
-    for i in 1..5 do
+    # action   
+    visit "https://beta.mindbodygreen.com/0-26580/why-this-acroyogi-makes-it-a-point-to-get-upside-down-sweat-every-single-day.html"
+
+    #Scroll down page 
+    for i in 1..10 do
       scroll_offset += 500 
       page.execute_script("window.scrollTo(0,#{scroll_offset})")
       if page.has_selector?(:css, 'div.listbuilder-popup-scale', wait: 10)
-        #page.find(:css, "div[class*='sumome-react-wysiwyg-close-button'").click
+        page.find(:css, "div[class*='sumome-react-wysiwyg-close-button'").click
         break
       end
     end
@@ -132,8 +133,12 @@ test(id: 49012, title: "Article Basics - Desktop") do
     # *** START EDITING HERE ***
       
     # action
-    scroll_offset += 2000 
-    page.execute_script("window.scrollTo(0,#{scroll_offset})")
+    sleep(10)
+    #Scroll down page 
+    for i in 1..4 do
+      scroll_offset += 500 
+      page.execute_script("window.scrollTo(0,#{scroll_offset})")
+    end
 
     # response 
     expect(page.all(:css, '.row.unit.unit--tab--sm', :maximum => 4, :wait => 60, :visible => false).count).to eq(3)
@@ -193,7 +198,8 @@ test(id: 49012, title: "Article Basics - Desktop") do
     # *** START EDITING HERE ***
 
     # action
-    page.execute_script("window.scrollTo(0,1500)")
+    scroll_offset = 1500 
+    page.execute_script("window.scrollTo(0,#{scroll_offset})")
 
     # response
     expect(page).to have_content('EXPLORE MORE')
@@ -216,7 +222,6 @@ test(id: 49012, title: "Article Basics - Desktop") do
     # action
     scroll_offset += 1000 
     page.execute_script("window.scrollTo(0,#{scroll_offset})")
-    #page.execute_script("window.scrollTo(0,1500)")
 
     # response
     within(:css, '.row.article__latest') do
@@ -238,6 +243,7 @@ test(id: 49012, title: "Article Basics - Desktop") do
     # *** START EDITING HERE ***
 
     # action
+    # have to use staging environment
     visit 'https://staging.mindbodygreen.com/0-30005/heartbreak-isnt-all-there-is-heres-how-to-process-loss-open-yourself-up-to-l.html'
 
     # response
@@ -282,8 +288,9 @@ test(id: 49012, title: "Article Basics - Desktop") do
     # *** START EDITING HERE ***
 
     # action
-      scroll_offset = 0
-      page.execute_script("window.scrollTo(0,#{scroll_offset})")
+    # scroll back to the top of the page to author's name
+    scroll_offset = 0
+    page.execute_script("window.scrollTo(0,#{scroll_offset})")
 
     # response
     expect(page).to have_content("Derek O’Neill")
